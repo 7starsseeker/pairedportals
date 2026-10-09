@@ -1,0 +1,43 @@
+# ===== 构建产物 =====
+build/
+*.class
+
+# ===== Jar：本 mod 的成品走 Releases，其它 jar 全是第三方的，都不入库 =====
+*.jar
+
+# ===== 本机沙盒与运行期数据 =====
+# 本机沙盒：完整的服务端实例（服务端 jar / libraries / 世界存档 / usercache），
+# 单个就 200M+，且含 Mojang 与 Fabric 的再分发内容，一律不进仓库。
+tmp/
+sandbox/
+.sandbox/
+
+# ===== 日志与转储 =====
+*.log
+logs/
+*.bak
+*.orig
+PlayerList.txt
+injected-bytecode*.txt
+
+# ===== 实测截图（保留在开发工作区，不随仓库发布）=====
+test/client-evidence/
+
+# ===== 同一个工作区里不属于本 mod 的东西 =====
+# tools/ 与 *-源码/ 是另外几个独立 mod（worldsfamily / traderfix / worldsskybox）的
+# 工作副本与源码快照：它们各自独立发布、协议也不同，本仓库只收 pairedportals 自己。
+tools/
+*-源码/
+
+# ===== 编辑 / 工具留痕 =====
+.vscode/
+.idea/
+*.iml
+*.encbak
+__pycache__/
+*.pyc
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini

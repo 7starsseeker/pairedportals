@@ -1,0 +1,10 @@
+# 仓库里统一用 LF。Windows 上如果没有这条，任何把 core.autocrlf 设成 true 的贡献者
+# 都会把 test/*.sh 检出成 CRLF —— 那些脚本在 Linux/CI 上会当场以
+# "/usr/bin/env: 'bash\r': No such file or directory" 报错，而且 diff 会整文件翻红。
+* text=auto eol=lf
+
+# 二进制：不要做行尾/编码转换
+*.jar  binary
+*.class binary
+*.png  binary
+*.zip  binary
