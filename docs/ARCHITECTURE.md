@@ -1,4 +1,4 @@
-[English](ARCHITECTURE.md) · [中文](zh-CN/ARCHITECTURE.md)
+**English** · [中文](zh-CN/ARCHITECTURE.md)
 
 # Architecture
 

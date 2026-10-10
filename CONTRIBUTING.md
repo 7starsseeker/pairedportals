@@ -1,4 +1,4 @@
-[**English**](CONTRIBUTING.md) · [中文](CONTRIBUTING.zh-CN.md)
+**English** · [中文](CONTRIBUTING.zh-CN.md)
 
 > Part of the PairedPortals document set. English is canonical here; the Chinese wording lives in
 > [CONTRIBUTING.zh-CN.md](CONTRIBUTING.zh-CN.md). For how the mod is put together see

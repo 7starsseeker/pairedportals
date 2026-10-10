@@ -1,4 +1,4 @@
-[English](COMPATIBILITY.md) · [中文](zh-CN/COMPATIBILITY.md)
+**English** · [中文](zh-CN/COMPATIBILITY.md)
 
 # Compatibility
 

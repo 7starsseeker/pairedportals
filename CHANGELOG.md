@@ -1,4 +1,4 @@
-[**English**](CHANGELOG.md) · [中文](CHANGELOG.zh-CN.md)
+**English** · [中文](CHANGELOG.zh-CN.md)
 
 > Part of the PairedPortals document set. English is canonical here; the Chinese wording lives in
 > [CHANGELOG.zh-CN.md](CHANGELOG.zh-CN.md). For the design itself see

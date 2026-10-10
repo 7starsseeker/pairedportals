@@ -1,4 +1,4 @@
-[English](README.md) · [中文](README.zh-CN.md)
+**English** · [中文](README.zh-CN.md)
 
 > **Documentation:** [Architecture](docs/ARCHITECTURE.md) · [Building](docs/BUILDING.md) · [Testing](docs/TESTING.md) · [Commands](docs/COMMANDS.md) · [Compatibility](docs/COMPATIBILITY.md) · [Gameplay](docs/GAMEPLAY.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [中文](README.zh-CN.md)
 

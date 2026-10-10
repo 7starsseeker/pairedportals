@@ -1,4 +1,4 @@
-[English](COMMANDS.md) · [中文](zh-CN/COMMANDS.md)
+**English** · [中文](zh-CN/COMMANDS.md)
 
 # Commands
 

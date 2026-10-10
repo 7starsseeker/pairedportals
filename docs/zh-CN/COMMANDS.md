@@ -1,4 +1,4 @@
-[English](../COMMANDS.md) · [中文](COMMANDS.md)
+[English](../COMMANDS.md) · **中文**
 
 # 命令参考
 
