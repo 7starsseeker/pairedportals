@@ -199,10 +199,11 @@ ServerLevel destination = level.getServer().getLevel(twin.dimension());
 - 每世界独立的 gamerule 用 `/worlds gamerule <worldId> <rule> <value|inherit>`。26.3 的流浪商人规则
   运行时 id 是 `minecraft:spawn_wandering_traders`——旧的 `doTraderSpawning` 已改名。
 
-### 手工验收清单：**尚未由作者跑过**（§11.6）
+### 手工验收清单：1–3 已跑，4–6 待跑（§11.6）
 
-**本轮没有在真服务器上跑过跨世界传送。** 改动只经过 `./build.sh` 编译与静态复核。下面这份清单是
-「多世界」这条承诺在被称作「已验证」之前，必须由人跑完的东西：
+**跨世界传送已于 2026-10-11 在真·多世界服务器上手工走过**（装了 Worlds），因此下面第 1–3 条属实测：
+两端 `BOUND`、行尾世界状态正确，人也确实被送进了另一个世界。第 4–6 条 —— 两条失败路径与
+**跨世界拆门** —— 还没跑：
 
 1. 两扇门分别立在主世界与一个 Worlds 世界（如 `newworld:overworld`），牌子文字相同 → `list` 两端
    `BOUND`、行尾世界状态正确。
@@ -213,7 +214,8 @@ ServerLevel destination = level.getServer().getLevel(twin.dimension());
    并传送成功。
 5. 把门记录指向一个不存在的维度（删世界目录或改 NBT）→ 门**不被拆**，日志
    `no level for <id> (no such world)`，`info` 的 `twin world:` 显示 `no such world`。
-6. 挖掉对面世界的框 → 仍然整对退场（原有语义不变；同一段逻辑由 `smoke-demolish.sh` 覆盖）。
+6. 挖掉**对面世界的**框 → 仍然整对退场（原有语义不变）——**跨世界这一版还没跑过**；同世界的那一版由
+   `smoke-demolish.sh` 覆盖。
 
 ## 其他模组
 

@@ -186,17 +186,22 @@ Honesty matters more here than a longer feature list:
 - It does **not** tell a player why a dead door is dead. That is the zero-feedback design described above; the reason is in the server log.
 - It does **not** ship a resource pack, a language file or a config screen.
 
+## Verified by hand on a real server
+
+| Area | Result |
+|---|---|
+| Cross-world travel (a door in one world leading to a door in another) | **Walked 2026-10-11** on a real multi-world server with the Worlds mod: a door in the default world and one in `newworld:overworld` carrying the same sign text showed `BOUND` at both ends with the right world state, and walking through carried the traveller into the other world. Cross-world *demolition* has not been walked. |
+
 ## Not yet verified
 
 The following are documented here but were **not** confirmed end to end by the author. Treat them as describing intended behaviour, not as measured results:
 
 | Area | Status |
 |---|---|
-| Cross-world travel (a door in one world leading to a door in another) | The code path is the same one used for every other trip, but no run was made against a live multi-world server. [README.zh-CN.md](../README.zh-CN.md) §11.6 lists the manual acceptance checklist that was left to do. |
 | Sound | Unverified — a screenshot cannot show it, and the checked evidence was visual. |
 | "Mining a frame corner is not a demolition" | The test stage that covers it was only syntax-checked (`bash -n`), never executed. |
 | Same-dimension pairs | Human-tested (two overworld doors paired, travelled both ways, and stayed in the arrival hole for tens of seconds without bouncing). The regression script `test/smoke-samedim.sh` is written but has not been run. |
-| Travelling from the End or a modded dimension | Igniting a door there is tested; the *travel* half was not walked, because it needs a paired door at the far end. |
+| Travelling from the End | Igniting a door there is tested; the *travel* half was not walked, because it needs a paired door at the far end. (Travelling from a **modded** dimension — a Worlds world — was walked on 2026-10-11; see the table above.) |
 | Piston behaviour and mining time of the frame | Not measured. The frame blocks are literally vanilla obsidian, so vanilla behaviour is expected. |
 
 ## FAQ

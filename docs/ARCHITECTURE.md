@@ -661,9 +661,10 @@ blocks through it is not a question worth asking. Its doors are judged the next 
 which is also the next time anybody can walk through them. This is the only place a verdict is
 deferred; §6's demolition is the only place a chunk is force-loaded.
 
-**Not mechanically verified this round.** Cross-world travel was not exercised on a real server in the
-current delivery — the change was compiled and statically reviewed only. The manual acceptance list is
-README.zh-CN.md §11.6, and [TESTING.md](TESTING.md) records what each script does and does not cover.
+**Cross-world travel is real-server verified as of 2026-10-11.** A door in the default world and one
+in a Worlds world paired up and carried the traveller across by hand — the run, and what it left
+unmeasured (the two failure paths, and cross-world demolition), are in README.zh-CN.md §11.6.
+[TESTING.md](TESTING.md) records what each script does and does not cover.
 
 ## 12. Invariants the code guarantees
 

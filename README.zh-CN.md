@@ -434,16 +434,16 @@ ServerLevel destination = level.getServer().getLevel(twin.dimension());
 - 用 `/worlds create <id> from-dimension <type> <seed>` 让它**接管**已存在的文件夹（`loadOrCreateWorld` 对已存在目录只打日志、不重建），种子必须与被搬存档一致。
 - 每世界独立的 gamerule 用 `/worlds gamerule <worldId> <rule> <value|inherit>`；26.3 的流浪商人规则运行时 id 是 `minecraft:spawn_wandering_traders`（旧的 `doTraderSpawning` 已改名）。
 
-### 11.6 未实测（本轮交付的手工验收清单）
+### 11.6 真机验收：跑过什么、还没跑什么
 
-本轮**没有**在真服务器上跑过跨世界传送（用户要求「做完先别替换文件」），改动只经过 `./build.sh` 编译与静态复核：
+**2026-10-11 在真·多世界服务器上手工跑过一遍**（Minecraft 26.3 + *Worlds: Multiverse for Fabric*）——**跨世界传送有效**，即下面第 1–3 条。两条失败路径（4、5）与**跨世界拆门**（6）仍未实测。
 
-1. 两扇门分别立在主世界与一个 Worlds 世界（如 `newworld:overworld`），牌子文字相同 → `list` 两端 `BOUND`、行尾世界状态正确。
+1. 两扇门分别立在主世界与一个 Worlds 世界（本例 `newworld:overworld`），牌子文字相同 → `list` 两端 `BOUND`、行尾世界状态正确：主世界那扇读作 `newworld.overworld 338, 74, -4（未加载（用的时候会自动加载））`，Worlds 世界里的那扇读作 `minecraft.overworld 184, 151, 69（已加载）`。
 2. 走进其中一扇 → 到对面**同一文字**那扇门前（不是坐标缩放后的位置），坐标与朝向符合 §5。
 3. 从对面走回来 → 正常（注意 300 tick / 载着玩家 10 tick 的门冷却）。
 4. 用 `/worlds` 把对面世界关掉再走一次 → **门不被拆**，`list` 仍 `BOUND`，日志出现 `cannot travel: world <id> is stopped; waiting for it to come back`；再走一次能自动把世界拉起来并传送成功。
 5. 把门记录指向一个不存在的维度（删世界目录或改 NBT）→ 门**不被拆**，日志 `no level for <id> (no such world)`，`info` 的 `twin world:` 显示 `no such world`。
-6. 挖掉对面世界的框 → 仍然整对退场（原有语义不变；同一段逻辑由 `smoke-demolish.sh` 覆盖）。
+6. 挖掉**对面世界的**框 → 仍然整对退场（原有语义不变）——**跨世界这一版还没跑过**；同世界的那一版由 `smoke-demolish.sh` 覆盖。
 
 ---
 

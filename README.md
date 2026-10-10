@@ -442,16 +442,16 @@ is **load-on-demand** for a "registered but not loaded" world — one trip throu
 - Use `/worlds create <id> from-dimension <type> <seed>` to let it **take over** a folder that already exists (`loadOrCreateWorld` only logs for an existing directory; it does not rebuild it), and the seed must match the save being moved.
 - Per-world gamerules use `/worlds gamerule <worldId> <rule> <value|inherit>`; in 26.3 the wandering trader rule's runtime id is `minecraft:spawn_wandering_traders` (the old `doTraderSpawning` was renamed).
 
-### 11.6 Not measured (this round's manual acceptance checklist)
+### 11.6 Real-server acceptance: what has been run, and what has not
 
-This round **did not** run a cross-world teleport on a real server (the user asked to "not replace the files yet"), so the changes went through `./build.sh` compilation and a static re-read only:
+**Run by hand on a real multi-world server, 2026-10-11** (Minecraft 26.3 + *Worlds: Multiverse for Fabric*) — **cross-world travel works**: items 1–3 below. The two failure paths (4, 5) and **cross-world demolition** (6) are still not measured.
 
-1. Put one door in the overworld and one in a Worlds world (e.g. `newworld:overworld`) with the same sign text → both ends `BOUND` in `list`, with the right world state on the line.
-2. Walk into one → you arrive in front of the door carrying the **same text** on the other side (not at a coordinate-scaled position), with position and facing matching §5.
+1. One door in the default world and one in a Worlds world (`newworld:overworld`), both signs carrying the same text → both ends `BOUND` in `list`, with the right world state on the line: the default-world door read `newworld.overworld 338, 74, -4 (registered, not loaded)`, and the door inside the Worlds world read `minecraft.overworld 184, 151, 69 (loaded)`.
+2. Walk into one → you arrive in front of the door carrying the **same text** in the other world (not at a coordinate-scaled position), with position and facing matching §5.
 3. Walk back from the other side → normal (mind the 300-tick / 10-tick-while-carrying-a-player door cooldown).
 4. Switch the far world off with `/worlds` and walk again → the **door is not demolished**, `list` is still `BOUND`, the log shows `cannot travel: world <id> is stopped; waiting for it to come back`; another walk brings the world up automatically and travels successfully.
 5. Point a door's record at a dimension that does not exist (delete the world directory or edit the NBT) → the door **is not demolished**, the log says `no level for <id> (no such world)`, and `info`'s `twin world:` shows `no such world`.
-6. Dig out the frame in the far world → the whole pair still retires (the existing semantics, unchanged; the same code is covered by `smoke-demolish.sh`).
+6. Dig out the frame in the **far** world → the whole pair still retires (the existing semantics, unchanged) — **not yet run across worlds**; the single-world equivalent is covered by `smoke-demolish.sh`.
 
 ## 12. In-game text and languages
 

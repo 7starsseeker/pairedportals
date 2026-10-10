@@ -234,11 +234,12 @@ working" and "the doors came back out of sync":
 - Per-world gamerules: `/worlds gamerule <worldId> <rule> <value|inherit>`. The wandering-trader rule
   is `minecraft:spawn_wandering_traders` at runtime in 26.3 — the old `doTraderSpawning` is renamed.
 
-### Manual acceptance checklist, not yet run (§11.6)
+### Manual acceptance checklist: 1–3 run, 4–6 to go (§11.6)
 
-**This round did not run cross-world travel on a real server.** The change was compiled with
-`./build.sh` and statically re-reviewed only. The checklist below is what a human has to run before
-the multi-world claim can be called verified:
+**Cross-world travel was walked by hand on a real multi-world server on 2026-10-11** (Worlds mod
+active), so items 1–3 below are measured: the two doors paired up (`BOUND` at both ends, with the
+correct world-state tails) and the trip carried the traveller into the other world. Items 4–6 — the
+two failure paths and **cross-world demolition** — are still to be run:
 
 1. Stand two doors in the overworld and in a Worlds world (e.g. `newworld:overworld`) with the same
    sign text → both ends show `BOUND` in `list`, and the world-state tail is correct.
@@ -253,8 +254,9 @@ the multi-world claim can be called verified:
 5. Point a door record at a dimension that does not exist (delete the world directory or edit the
    NBT) → the pair is **not demolished**, the log says `no level for <id> (no such world)`, and
    `info`'s `twin world:` shows `no such world`.
-6. Mine out the frame in the far world → the pair still retires together (the existing semantics are
-   unchanged; the same code path is covered by `smoke-demolish.sh`).
+6. Mine out the frame in the **far** world → the pair still retires together (the existing semantics
+   are unchanged) — **not yet run across worlds**; the single-world equivalent is covered by
+   `smoke-demolish.sh`.
 
 ## Other mods
 
