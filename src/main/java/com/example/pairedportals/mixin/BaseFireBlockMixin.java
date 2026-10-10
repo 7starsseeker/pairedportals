@@ -3,6 +3,7 @@ package com.example.pairedportals.mixin;
 import com.example.pairedportals.portal.IgnitionResult;
 import com.example.pairedportals.portal.PortalBuilder;
 import com.example.pairedportals.portal.PortalRegistry;
+import com.example.pairedportals.text.Messages;
 import com.example.pairedportals.visual.FrameNameHint;
 
 import net.minecraft.core.BlockPos;
@@ -53,18 +54,18 @@ public abstract class BaseFireBlockMixin {
             }
             case BUILT -> ci.cancel();
             case EMPTY_SIGN -> {
-                FrameNameHint.warn(serverLevel, pos, "门洞内的告示牌没有内容");
+                FrameNameHint.warn(serverLevel, pos, Messages.signBlank());
                 ci.cancel();
             }
             case TOO_MANY_SIGNS -> {
-                FrameNameHint.warn(serverLevel, pos, "门洞内只能放一块有内容的告示牌");
+                FrameNameHint.warn(serverLevel, pos, Messages.signTooMany());
                 ci.cancel();
             }
             case NO_PERMISSION -> {
                 // The fire that was just placed stays exactly that: a fire. Nothing is written, and
                 // cancelling also keeps vanilla's portal branch from lighting the frame for us.
-                FrameNameHint.warn(serverLevel, pos, "没有权限激活自定义传送门（当前："
-                        + PortalRegistry.get(serverLevel).activation().label() + "）");
+                FrameNameHint.warn(serverLevel, pos,
+                        Messages.noPermission(PortalRegistry.get(serverLevel).activation()));
                 ci.cancel();
             }
             case ALREADY_OURS -> {

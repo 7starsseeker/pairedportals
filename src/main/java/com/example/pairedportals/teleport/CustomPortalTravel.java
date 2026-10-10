@@ -11,6 +11,7 @@ import com.example.pairedportals.portal.PortalLocation;
 import com.example.pairedportals.portal.PortalRegistry;
 import com.example.pairedportals.portal.PortalState;
 import com.example.pairedportals.portal.PortalValidator;
+import com.example.pairedportals.text.Messages;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -81,7 +82,8 @@ public final class CustomPortalTravel {
                 entity.getUUID(), pos.toShortString(), level.dimension().identifier(), here.id(), here.state());
 
         if (here.state() != PortalState.BOUND || here.twinId() == null) {
-            notice(entity, "这扇门还没有配对：在别处再点亮一扇写着「" + here.signText() + "」的门");
+            notice(entity, "this door has no twin yet: light another door elsewhere with \""
+                    + here.signText() + "\" written on it");
             return TravelDecision.NOTHING;
         }
 
@@ -91,7 +93,7 @@ public final class CustomPortalTravel {
             // ends come down — starting with this one, whose lit blocks go here and now, so a door
             // stops looking like a door at the same moment it stops being one.
             PortalValidator.demolish(level.getServer(), registry, here);
-            notice(entity, "对面的门已经不在了");
+            notice(entity, "the twin door is gone");
             return TravelDecision.NOTHING;
         }
 
@@ -106,8 +108,9 @@ public final class CustomPortalTravel {
             // is missing today can be back tomorrow. Refusing the trip says that; demolishing the doors
             // would say "these are broken", which is a different and much worse thing to be wrong about.
             WorldsCompat.WorldState state = WorldsCompat.state(level.getServer(), twin.dimension());
-            refuse(here, "no level for " + twin.dimension().identifier() + " (" + state.english() + ")");
-            notice(entity, "对面的世界现在不在：" + twin.dimension().identifier());
+            refuse(here, "no level for " + twin.dimension().identifier() + " ("
+                    + Messages.worldState(state).en() + ")");
+            notice(entity, "the twin's world is not here right now: " + twin.dimension().identifier());
             return TravelDecision.NOTHING;
         }
 
@@ -118,7 +121,7 @@ public final class CustomPortalTravel {
             // the level map at the end of the tick, and the lookup above builds it again on the spot.
             refuse(here, "world " + twin.dimension().identifier() + " is "
                     + WorldsCompat.stateName(destination) + "; waiting for it to come back");
-            notice(entity, "对面的世界正在关闭，稍后再试");
+            notice(entity, "the twin's world is shutting down; try again later");
             return TravelDecision.NOTHING;
         }
 
@@ -138,7 +141,7 @@ public final class CustomPortalTravel {
             // two, but it is not a door any more. Nothing to travel to, and this end should not stay a
             // door either, so both ends come down together.
             PortalValidator.demolish(level.getServer(), registry, here);
-            notice(entity, "对面的门已经被拆掉了");
+            notice(entity, "the twin door has been demolished");
             return TravelDecision.NOTHING;
         }
 
@@ -237,6 +240,9 @@ public final class CustomPortalTravel {
      * who walks into a dead door learns nothing from it, exactly as a vanilla door would refuse to
      * have anything to say. The lookup happens once per tick per entity standing in the hole, so a
      * message here would otherwise repeat forever.
+     *
+     * <p>Because only the log ever reads these, they are plain English diagnostics: nothing a player
+     * can read goes through here, so the {@code text} package has no say in them.
      */
     private static void notice(Entity entity, String message) {
         PairedPortals.debug("[pairedportals] blocked travel ({}): {}", message, entity.getUUID());

@@ -68,34 +68,17 @@ public final class WorldsCompat {
     /**
      * What the server currently knows about one dimension key.
      *
-     * <p>Both labels are carried because the two audiences differ: the action bar and the logs are
-     * read by players, the command output is read by whoever is debugging a door.
+     * <p>The enum carries no wording: the action bar, the command output and the logs all describe
+     * these three states, and the one place that decides how each is phrased — per language — is
+     * {@code text.Messages#worldState}. That record's {@code en} column is what the log side reads.
      */
     public enum WorldState {
         /** A live level exists for this key right now. */
-        LOADED("已加载", "loaded"),
+        LOADED,
         /** No level right now, but a world is registered: a Worlds world loads on demand. */
-        UNLOADED("未加载（用的时候会自动加载）", "registered, not loaded"),
+        UNLOADED,
         /** Nothing on the server knows this dimension: no level, and no world registered. */
-        UNKNOWN("世界不存在", "no such world");
-
-        private final String label;
-        private final String english;
-
-        WorldState(String label, String english) {
-            this.label = label;
-            this.english = english;
-        }
-
-        /** The Chinese name shown to players. */
-        public String label() {
-            return label;
-        }
-
-        /** The name shown in command output. */
-        public String english() {
-            return english;
-        }
+        UNKNOWN
     }
 
     /** Whether Worlds is installed on this server. */

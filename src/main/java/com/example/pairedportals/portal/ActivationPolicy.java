@@ -24,35 +24,32 @@ import net.minecraft.server.permissions.Permissions;
  * hints already use — which is exact for the ordinary case of someone standing at the frame with
  * flint and steel, and treats a frame lit by a dispenser or by spreading fire as having no operator
  * at all.
+ *
+ * <p>What a player reads for a policy — "everyone", "operators only", "nobody" — depends on the
+ * reader's language, so it lives with the rest of the wording in {@code text.Messages#policy}
+ * rather than on the constant.
  */
 public enum ActivationPolicy {
     /** Anyone may light a door. */
-    ALL("all", "所有人"),
+    ALL("all"),
     /** Only a player with operator rights (command level 2) may light a door. */
-    OP("op", "仅 OP"),
+    OP("op"),
     /** No new door may be lit; existing doors keep working. */
-    NONE("none", "所有人都不行");
+    NONE("none");
 
     /** How far from the fire a player still counts as the one who lit it. */
     private static final double NEARBY_RADIUS = 8.0;
     private static final double NEARBY_RADIUS_SQ = NEARBY_RADIUS * NEARBY_RADIUS;
 
     private final String key;
-    private final String label;
 
-    ActivationPolicy(String key, String label) {
+    ActivationPolicy(String key) {
         this.key = key;
-        this.label = label;
     }
 
     /** The name this setting is stored and typed under. */
     public String key() {
         return key;
-    }
-
-    /** The Chinese name shown to players. */
-    public String label() {
-        return label;
     }
 
     /** The policy {@code key} names, or {@link #ALL} for anything unrecognised. */

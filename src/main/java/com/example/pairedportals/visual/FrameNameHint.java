@@ -8,6 +8,9 @@ import com.example.pairedportals.PairedPortals;
 import com.example.pairedportals.compat.WorldsCompat;
 import com.example.pairedportals.portal.CustomPortal;
 import com.example.pairedportals.portal.PortalRegistry;
+import com.example.pairedportals.text.Lang;
+import com.example.pairedportals.text.Messages;
+import com.example.pairedportals.text.Text;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -30,6 +33,11 @@ import net.minecraft.world.phys.Vec3;
  * <p>{@code Player.displayClientMessage} no longer exists in 26.3, and {@code
  * Player.sendOverlayMessage} is an empty method — only {@code ServerPlayer} overrides it, routing to
  * an action bar packet. Every message here therefore has to go through a {@code ServerPlayer}.
+ *
+ * <p>Because that channel is the mod's only way of speaking to a player, it is also where the message
+ * language is decided: every hint is built as a {@link Text} in {@link Messages} and resolved here,
+ * per recipient, from the language their client reported. Nothing else in the mod needs to know that
+ * a second language exists.
  */
 public final class FrameNameHint {
     /** Reach used both for the ignition warnings and for the look-at hint. */
@@ -58,7 +66,7 @@ public final class FrameNameHint {
     }
 
     /** Sends {@code message} to the action bar of the closest player, if any is near enough. */
-    public static void warn(ServerLevel level, BlockPos pos, String message) {
+    public static void warn(ServerLevel level, BlockPos pos, Text message) {
         ServerPlayer nearest = null;
         double best = RADIUS_SQ;
         for (ServerPlayer player : level.players()) {
@@ -68,11 +76,14 @@ public final class FrameNameHint {
                 nearest = player;
             }
         }
+        // With nobody in range the message has no reader who could be told about it, so it goes to the
+        // log instead — in English, like every other log line, so an operator reading the log later
+        // sees the refusal in the same language no matter who happened to be online at the time.
         if (nearest == null) {
-            PairedPortals.info("[pairedportals] {} at {} (no player nearby)", message, pos);
+            PairedPortals.info("[pairedportals] {} at {} (no player nearby)", message.resolve(Lang.EN), pos);
             return;
         }
-        nearest.sendOverlayMessage(Component.literal(message));
+        nearest.sendOverlayMessage(Component.literal(message.resolve(Lang.of(nearest))));
     }
 
     /**
@@ -89,11 +100,12 @@ public final class FrameNameHint {
             shown.keySet().removeIf(uuid -> level.getServer().getPlayerList().getPlayer(uuid) == null);
         }
         for (ServerPlayer player : level.players()) {
-            String message = describe(level, player);
-            if (message == null) {
+            Text hint = describe(level, player);
+            if (hint == null) {
                 shown.remove(player.getUUID());
                 continue;
             }
+            String message = hint.resolve(Lang.of(player));
             Shown previous = shown.get(player.getUUID());
             if (previous != null && previous.message().equals(message)
                     && level.getGameTime() - previous.tick() < REFRESH_TICKS) {
@@ -115,7 +127,7 @@ public final class FrameNameHint {
      * does not hold. Staring at the part of the door a player actually sees — obsidian — has to work
      * just as well as staring into the hole.
      */
-    private static String describe(ServerLevel level, ServerPlayer player) {
+    private static Text describe(ServerLevel level, ServerPlayer player) {
         Vec3 from = player.getEyePosition();
         Vec3 to = from.add(player.getViewVector(1.0f).scale(REACH));
         BlockHitResult hit = level.clip(new ClipContext(from, to,
@@ -135,16 +147,15 @@ public final class FrameNameHint {
         // world", and it is also what explains a door that refuses to carry anyone right now: a far
         // world that is not loaded (or no longer exists) is named here as such.
         return switch (portal.state()) {
-            case PENDING -> "未绑定的自定义传送门：等待另一扇写着「" + portal.signText() + "」的门";
+            case PENDING -> Messages.hintWaiting(portal.signText());
             case BOUND -> {
                 CustomPortal twin = portal.twinId() == null
                         ? null
                         : PortalRegistry.get(level).byId(portal.twinId()).orElse(null);
                 yield twin == null
-                        ? "已绑定的自定义传送门（对门记录已不在）"
-                        : "已绑定的自定义传送门：通往 " + twin.dimension().identifier() + " "
-                                + twin.holeMin().toShortString() + "（"
-                                + WorldsCompat.state(level.getServer(), twin.dimension()).label() + "）";
+                        ? Messages.hintTwinGone()
+                        : Messages.hintBound(twin.dimension().identifier().toString(), twin.holeMin().toShortString(),
+                                WorldsCompat.state(level.getServer(), twin.dimension()));
             }
         };
     }
