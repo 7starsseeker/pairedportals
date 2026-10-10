@@ -12,6 +12,14 @@ PairedPortals 的全部重要变更，最新的在最前。格式沿用
 
 ## 未发布（Unreleased）
 
+### 变更
+
+- **本 mod 现在在单人存档里也会加载。** `src/main/resources/fabric.mod.json` 原来把环境字段标成
+  `"server"`，而 Fabric Loader 对这种标记的处理就是不加载 —— 单人世界的集成服务端
+  跑在客户端 JVM 里，标记为纯服务端的 mod 在那里不会被加载。现在改成 `"environment": "*"`，
+  集成服务端会像专用服务端一样把它加载起来。本 mod 依旧没有客户端半边：只有一个 `main` 入口、
+  没有 `client` 入口，`assets/` 下也没有任何东西。已在单人存档里实测通过。
+
 ### 新增
 
 - **英文优先的文档集**：`README.md` 加 `docs/ARCHITECTURE.md`、`docs/BUILDING.md`、
@@ -24,7 +32,7 @@ PairedPortals 的全部重要变更，最新的在最前。格式沿用
   - 实现落在 `src/main/java/com/example/pairedportals/text/Lang.java`（枚举 `EN` / `ZH`，按玩家解析）
     与 `src/main/java/com/example/pairedportals/text/Messages.java`（每条玩家可见文案的中英文并排放在
     一起，一条文案一个 `Text` 记录，见 `src/main/java/com/example/pairedportals/text/Text.java`）。
-  - 因为本 mod 是**纯服务端**，它不能随包提供客户端语言文件，也**不用** `Component.translatable(...)`；
+  - 因为本 mod 没有客户端半边，它不能随包提供客户端语言文件，也**不用** `Component.translatable(...)`；
     由服务端按玩家挑出字面文案再下发。客户端语言读自 `ServerPlayer.clientInformation().language()`。
   - 两处玩家可见界面都本地化了：**actionbar 提示**与 **`/pairedportals` 命令输出**。
 
@@ -44,15 +52,15 @@ PairedPortals 的全部重要变更，最新的在最前。格式沿用
 
 ## 1.0.0
 
-首个发布：**Minecraft 26.3 上纯服务端、按告示牌文字配对的自定义传送门**。在传送门形状的黑曜石框里
+首个发布：**Minecraft 26.3 上服务端侧、按告示牌文字配对的自定义传送门**。在传送门形状的黑曜石框里
 放一块写着文字的告示牌，点火后这扇门就不再走原版的「主世界↔下界」规则，而是**同文字的门两两配对、
 互相直达** —— 跨维度，也包括多世界服务端的自定义维度。
 
 ### 特性
 
-- **纯服务端，零客户端依赖**：`src/main/resources/fabric.mod.json` 是 `"environment": "server"`，
+- **逻辑全在服务端，零客户端依赖**：`src/main/resources/fabric.mod.json` 是 `"environment": "*"`，
   只有 `main` 入口、没有 `client` 入口；编译产物 jar 里 `client|assets|lang|models|textures`
-  **0 命中**。原版客户端直连即可，不需要装本 mod，也不需要资源包。
+  **0 命中**。原版客户端直连即可，不需要装本 mod，也不需要资源包；单人存档里由游戏自带的集成服务端加载本 mod，同样生效。
 - **不替换任何真实方块**：门框就是**原版黑曜石**，门洞里的门方块就是**原版 `nether_portal`**；
   门的两种状态只靠服务端下发的 actionbar 文案区分 —— 准星指向门框、或指向门洞里的传送门方块时都会提示。
 - **不抢原版门**：点火分流在 `BaseFireBlock.onPlace` HEAD 同 tick 完成；原版找落脚点时若命中我们的门，

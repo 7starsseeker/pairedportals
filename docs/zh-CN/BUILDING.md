@@ -14,7 +14,7 @@ Gradle/Loom 构建、为什么全程不联网、[`build.sh`](../../build.sh) 一
 | Minecraft | **26.3** |
 | 模组加载器 | Fabric Loader |
 | 必需依赖 | Fabric API |
-| 安装侧 | **仅服务端**。客户端不需要安装本 mod，也不需要资源包 |
+| 安装侧 | **服务端侧**。客户端不需要安装本 mod，也不需要资源包；单人存档由游戏自带的集成服务端加载 |
 | Java | **25**（JDK，提供 `javac`/`jar`；26.3 的 class 是 Java 25，JDK 21 读都读不了 —— `build.sh` 会先自检并明确报错） |
 | 可选兼容 | Worlds: Multiverse for Fabric（mod id `mc-worlds`）—— 纯反射软桥，不装也照常工作（§11） |
 
@@ -142,9 +142,9 @@ flowchart TD
 成品 jar 从 Releases 取，也可以按上面的步骤从源码自己构建。需要凑齐的 jar 清单就是：
 **Fabric Loader + Fabric API + 本 mod**（外加你本来就装的其它东西）。
 
-本 mod 是纯服务端的，所以没有需要安装、也没有需要同步的客户端半边。元数据把这件事写死了：
+本 mod 没有客户端半边，所以客户端没有需要安装、也没有需要同步的东西。元数据把这件事写死了：
 
-- `src/main/resources/fabric.mod.json` 是 `"environment": "server"`，只有 `main` 入口 —— 没有 `client` 入口。
+- `src/main/resources/fabric.mod.json` 是 `"environment": "*"`，只有 `main` 入口 —— 没有 `client` 入口。
 - `depends`：`fabricloader >=0.19.5`、`fabric-api *`、`minecraft ~26.3-`、`java >=25`。
 - `suggests`：`mc-worlds`（Worlds: Multiverse for Fabric），可选 —— 见
   [COMPATIBILITY.md](COMPATIBILITY.md) 与 README §11。

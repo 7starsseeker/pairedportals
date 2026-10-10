@@ -98,9 +98,9 @@ section，然后从方块重新推导出每一条记录，而我们的方块真�
 
 ## 纯原版客户端直连（§10.2）
 
-本 mod 纯服务端，而这个说法有两半——一半是可以读着查的静态证据，另一半是真的跑过的动态证据。
+本 mod 是服务端侧的，而这个说法有两半——一半是可以读着查的静态证据，另一半是真的跑过的动态证据。
 
-**静态证据。** `src/main/resources/fabric.mod.json` 是 `"environment": "server"`，只有 `main`
+**静态证据。** `src/main/resources/fabric.mod.json` 是 `"environment": "*"`，只有 `main`
 入口、没有 `client` 入口。编译产物 jar 共 45 个条目、不含任何客户端资源：就是本 mod 自己的 class
 文件加 `fabric.mod.json` 与 `pairedportals.mixins.json`，没有 `assets/`、`lang/`、`models/`、
 `textures/` 条目（`unzip -Z1 build/libs/pairedportals-1.0.0.jar | grep -v '\.class$'`；而一条不分

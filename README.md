@@ -8,18 +8,18 @@
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.3-62B47A?style=flat-square)](https://www.minecraft.net/)
 [![Loader](https://img.shields.io/badge/Loader-Fabric-DBB69B?style=flat-square)](https://fabricmc.net/)
-[![Side](https://img.shields.io/badge/Side-server--only-4C8EDA?style=flat-square)](#requirements)
+[![Side](https://img.shields.io/badge/Side-server--side-4C8EDA?style=flat-square)](#requirements)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](LICENSE)
 
 **Custom portals paired by matching sign text.**
 
 Put a **written sign** inside a portal-shaped obsidian frame, light it, and the door stops following vanilla's overworld↔nether rule: **any two doors carrying the same text pair up and lead straight to each other** — across dimensions, custom ones included.
 
-*PairedPortals 是一款纯服务端的 Minecraft 26.3 Fabric mod：在传送门形状的黑曜石框里放一块写着文字的告示牌并点火，任意两扇写着同样文字的门就会结成双向配对 —— 跨维度，也包括多世界服务端的自定义维度。*
+*PairedPortals 是一款服务端侧的 Minecraft 26.3 Fabric mod（单人存档同样生效）：在传送门形状的黑曜石框里放一块写着文字的告示牌并点火，任意两扇写着同样文字的门就会结成双向配对 —— 跨维度，也包括多世界服务端的自定义维度。*
 
 ## Features
 
-- **Server-side only, zero client dependencies**: `fabric.mod.json` is `"environment": "server"`, with a `main` entrypoint and no `client` entrypoint, and the built jar has **0 hits** for `client|assets|lang|models|textures`. A vanilla client connects as it is — no mod to install, no resource pack.
+- **Server-side, zero client dependencies**: all of the mod runs on the server. `fabric.mod.json` is `"environment": "*"`, with a `main` entrypoint and no `client` entrypoint, and the built jar has **0 hits** for `client|assets|lang|models|textures`. A vanilla client connects as it is — no mod to install, no resource pack — and a **singleplayer world works too**, because the integrated server is a server: the mod loads and runs there exactly as it does on a dedicated one.
 - **No real blocks are replaced**: the frame is **vanilla obsidian** and the portal block in the hole is the **vanilla `nether_portal`**. The two states of a door (unbound / bound) are told apart only by the action-bar text the server sends — and it appears whether your crosshair is on the frame or on the portal block inside the hole.
 - **Vanilla doors are not stolen**: the ignition split runs in `BaseFireBlock.onPlace` at HEAD, within the same tick; when vanilla looks for a landing spot and hits one of our doors, it is told "none found". **No sign / blank sign / two or more signs ⇒ the whole thing goes back to vanilla logic**, and a vanilla door next door is unaffected (§2, §10.1).
 - **There is exactly one pairing rule**: for the same text, take the **earliest** unbound door (FIFO), and flip both ends to bound together. One frame cell can be shared by two doors without coupling them; **break one end ⇒ the whole pair disappears**, so a door that is still lit but cannot be walked through does not exist (§4).
@@ -33,7 +33,7 @@ Put a **written sign** inside a portal-shaped obsidian frame, light it, and the 
 | Minecraft | **26.3** |
 | Mod loader | Fabric Loader |
 | Required dependency | Fabric API |
-| Install side | **Server only.** The client needs neither this mod nor a resource pack |
+| Install side | **Server side.** The client needs neither this mod nor a resource pack, and a singleplayer world loads the mod through its own integrated server |
 | Java | **25** (26.3's classes are Java 25 and an older javac cannot read them; `build.sh` checks first and fails with a clear error) |
 | Optional compatibility | Worlds: Multiverse for Fabric (mod id `mc-worlds`) — a reflection-only soft bridge; everything works without it (§11) |
 
@@ -123,7 +123,7 @@ src/main/java/com/example/pairedportals/
     Messages.java                every player-visible string, held in both languages
     Text.java                    one message in both languages, resolved once at the edge
 src/main/resources/
-  fabric.mod.json              mod metadata (`"environment": "server"`, `main` entrypoint only, see §3)
+  fabric.mod.json              mod metadata (`"environment": "*"`, `main` entrypoint only, see §3)
   pairedportals.mixins.json    the declaration of the three injection points + one `@Accessor` (see §2)
 test/                        15 bash scripts (12 `smoke-*` assertions + 2 `probe-*` diagnostics + the resident host `client-host.sh`) + 1 mod-free client launcher, see §6
 ```
@@ -369,7 +369,7 @@ The audit also pointed out that "the build can be older than the source": after 
 
 ### 10.2 A vanilla-only client can connect (upstream design document §10.5 R5)
 
-**Static evidence (checkable)**: `src/main/resources/fabric.mod.json` is `"environment": "server"` with a `main` entrypoint and no `client` entrypoint; the built jar holds **no client-side resource of any kind** — 45 entries, all of them the mod's own class files plus exactly two resources, `fabric.mod.json` and `pairedportals.mixins.json`, with no `assets/`, `lang/`, `models/` or `textures/` entry (`unzip -Z1 build/libs/pairedportals-1.0.0.jar | grep -v '\.class$'`; a case-insensitive grep for `client|assets|lang|models|textures` matches only `com/example/pairedportals/text/Lang.class`, which is our own class file, not a language resource); the source has **zero game registrations** (only the two event callbacks `ServerTickEvents.END_SERVER_TICK` and `CommandRegistrationCallback`, plus a command tree of its own) ⇒ the server needs nothing installed on the client, matching the document's "0 new registrations, zero client resources".
+**Static evidence (checkable)**: `src/main/resources/fabric.mod.json` is `"environment": "*"` with a `main` entrypoint and no `client` entrypoint; the built jar holds **no client-side resource of any kind** — 45 entries, all of them the mod's own class files plus exactly two resources, `fabric.mod.json` and `pairedportals.mixins.json`, with no `assets/`, `lang/`, `models/` or `textures/` entry (`unzip -Z1 build/libs/pairedportals-1.0.0.jar | grep -v '\.class$'`; a case-insensitive grep for `client|assets|lang|models|textures` matches only `com/example/pairedportals/text/Lang.class`, which is our own class file, not a language resource); the source has **zero game registrations** (only the two event callbacks `ServerTickEvents.END_SERVER_TICK` and `CommandRegistrationCallback`, plus a command tree of its own) ⇒ the server needs nothing installed on the client, matching the document's "0 new registrations, zero client resources".
 
 **The dynamic half is verified too**: `test/client-join.py` started a **mod-free** 26.3 client that connected successfully (`logged in with entity id 3`) and could see the action-bar text the server sent, the purple screen and the landing spot (see screenshots `01`/`03`/`04`/`18`/`19`/`20` in §8.2). The only thing left unverified is **sound** (a screenshot cannot show it, and it needs ears).
 
@@ -457,7 +457,7 @@ This round **did not** run a cross-world teleport on a real server (the user ask
 
 **The rule**: every player-visible string follows **the language of the player who is reading it**. A client language starting with `zh` (`zh_cn` / `zh_tw` / `zh_hk`) gets Chinese; everything else gets English. The server, not the client, picks the wording and sends it as a literal.
 
-**Why it works this way.** The mod is server-side only (`"environment": "server"` in `src/main/resources/fabric.mod.json`), so it has no client half and can never ship a client language file. That rules out `Component.translatable(...)`: the key would arrive on a client with no lang file to resolve it and be shown as raw `pairedportals.message.pending` text. The server therefore reads the client locale from **`ServerPlayer.clientInformation().language()`** (Minecraft 26.3) — the only per-player signal the server has, and the right one, because a player's client language is what their own UI is in — and sends the literal itself.
+**Why it works this way.** The mod is server-side and has no client half (`"environment": "*"` in `src/main/resources/fabric.mod.json`), so it can never ship a client language file. That rules out `Component.translatable(...)`: the key would arrive on a client with no lang file to resolve it and be shown as raw `pairedportals.message.pending` text. The server therefore reads the client locale from **`ServerPlayer.clientInformation().language()`** (Minecraft 26.3) — the only per-player signal the server has, and the right one, because a player's client language is what their own UI is in — and sends the literal itself.
 
 **Both player-facing surfaces follow it**:
 

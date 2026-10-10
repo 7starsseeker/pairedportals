@@ -29,7 +29,7 @@ Three properties define the boundaries of the whole design:
 
 | Property | Evidence in the repository |
 |---|---|
-| **Server-side only.** A vanilla client connects with nothing installed and no resource pack. | [`fabric.mod.json`](../src/main/resources/fabric.mod.json) declares `"environment": "server"`, has a `main` entrypoint and **no** `client` entrypoint; the built jar is 45 entries and carries **no client-side resource** — the mod's own class files plus `fabric.mod.json` and `pairedportals.mixins.json`, with no `assets/`, `lang/`, `models/` or `textures/` entry (`unzip -Z1 build/libs/pairedportals-1.0.0.jar \| grep -v '\.class$'`) |
+| **Server-side.** A vanilla client connects with nothing installed and no resource pack, and a singleplayer world runs the mod through its own integrated server — the metadata lets both sides load it, while all of the logic stays on the server. | [`fabric.mod.json`](../src/main/resources/fabric.mod.json) declares `"environment": "*"`, has a `main` entrypoint and **no** `client` entrypoint; the built jar is 45 entries and carries **no client-side resource** — the mod's own class files plus `fabric.mod.json` and `pairedportals.mixins.json`, with no `assets/`, `lang/`, `models/` or `textures/` entry (`unzip -Z1 build/libs/pairedportals-1.0.0.jar \| grep -v '\.class$'`) |
 | **Zero game registrations.** No new block, item, entity, block entity, POI type, menu, packet, tag or data component exists. | the only two game callbacks in the entire source are `ServerTickEvents.END_SERVER_TICK` and `CommandRegistrationCallback.EVENT`, both in [`PairedPortals.java:56-63`](../src/main/java/com/example/pairedportals/PairedPortals.java) — plus the mod's own command tree, which is not a registry entry |
 | **No third-party dependencies.** | `fabric.mod.json` `depends` lists only `fabricloader`, `fabric-api`, `minecraft` and `java`; the optional Worlds bridge (§11) is reflection, and `suggests` it without requiring it |
 
@@ -41,9 +41,11 @@ surface a zero-resource server mod actually owns**, and that is where the two se
 live (§7).
 
 The same boundary decides how the wording itself works, and it is worth stating up front because it
-looks like an omission. With `"environment": "server"` there is no client-side half, so the mod can
-never ship a language file, and a `Component.translatable(...)` would be sent to the client as a key
-nobody can resolve — it would arrive as raw `pairedportals.message.pending` text. **The server has to
+looks like an omission. Whatever the metadata says (`"environment": "*"` since 1.0.0, so the mod also
+loads in a singleplayer world), there is no client-side half — one `main` entrypoint and nothing
+under `assets/` — so the mod can never ship a language file, and a `Component.translatable(...)`
+would be sent to the client as a key nobody can resolve — it would arrive as raw
+`pairedportals.message.pending` text. **The server has to
 choose the wording itself, per player, and send a literal**, which is what the `text/` package in §2
 does: the language comes from the one per-player signal a server has, the language code the client
 reported when it joined (`ServerPlayer.clientInformation().language()`). Anything starting `zh` is
@@ -687,7 +689,7 @@ reader can go and check.
    intact partner is downgraded (`CustomPortal.load`) or demolished on the next ignition
    (`classify` step 4), never silently trusted.
 10. **Nothing is registered with the game, and nothing is required on the client.** `fabric.mod.json`
-    keeps `"environment": "server"`, one `main` entrypoint, no `client` entrypoint, and the two event
+    keeps `"environment": "*"`, one `main` entrypoint, no `client` entrypoint, and the two event
     callbacks in `PairedPortals.onInitialize` are the only game hooks. Along with the missing client
     half comes the missing language file, so every player-visible string is chosen **by the server, per
     recipient** from the language their client reported (§2.1) — there is no translation key on the

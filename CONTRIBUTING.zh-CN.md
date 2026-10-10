@@ -9,17 +9,17 @@
 
 ## 项目是什么，以及唯一的硬性筛选条件
 
-PairedPortals 是 **Minecraft 26.3** 上**纯服务端**的 Fabric mod：在传送门形状的黑曜石框里放一块
+PairedPortals 是 **Minecraft 26.3** 上**服务端侧**的 Fabric mod：在传送门形状的黑曜石框里放一块
 **写着文字的告示牌**，这扇框就变成一扇门；任何两扇写着**同样文字**的门两两配对、互相直达 ——
 跨维度，也包括多世界服务端的两个世界。
 
 任何改动，先过这一条筛选：
 
-1. 它必须服务于本 mod 的目的 —— **按告示牌文字配对、纯服务端**；
+1. 它必须服务于本 mod 的目的 —— **按告示牌文字配对、服务端侧**；
 2. 它**不能**引入任何客户端资源、新的注册项、或第三方依赖。
 
 引入客户端资源、注册方块/实体/物品、或新增一个 jar 依赖的改动，从构造上就已经出界：
-`src/main/resources/fabric.mod.json` 是 `"environment": "server"` 且只有 `main` 一个入口，这是设计，
+`src/main/resources/fabric.mod.json` 是 `"environment": "*"` 且只有 `main` 一个入口，这是设计，
 不是巧合。构建又是离线 `javac`，所以第三方依赖还会让「没有那个 jar 的机器」直接编译不过。
 
 ## 环境要求
@@ -57,7 +57,7 @@ rm -rf build && ./build.sh          # -> build/libs/pairedportals-1.0.0.jar
 语言由 `src/main/java/com/example/pairedportals/text/Lang.java` **按玩家**解析。**绝不要在调用点硬写
 一个新字面量** —— 只要玩家能看见，它就属于 `Messages`。
 
-- 本 mod 是纯服务端，不能随包提供客户端语言文件，也**不用** `Component.translatable(...)`；
+- 本 mod 没有客户端半边，不能随包提供客户端语言文件，也**不用** `Component.translatable(...)`；
   由服务端按玩家挑出字面文案再下发。客户端语言读自 `ServerPlayer.clientInformation().language()`。
 - `zh_cn` / `zh_tw` / `zh_hk` 看中文；其余任何客户端语言看英文。
 - 两处玩家可见界面都跟随语言：**actionbar 提示**与 **`/pairedportals` 命令输出**。

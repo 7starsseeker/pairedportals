@@ -448,7 +448,7 @@ no portal owns <x, y, z> (neither a lit block of a hole nor a frame block around
 
 ## In-game text and command output
 
-Every string this mod sends is written by the server: the mod is server-side only, so it cannot ship
+Every string this mod sends is written by the server: the mod has no client half, so it cannot ship
 a client language file, and a `Component.translatable(...)` would reach the client as a key nobody
 can resolve — raw `pairedportals.message.pending` text on screen. The server therefore picks the
 wording itself and sends a literal. The only per-player signal it has is the language code the client

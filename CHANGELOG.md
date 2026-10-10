@@ -14,6 +14,15 @@ All notable changes to PairedPortals, newest first. The format follows
 
 ## Unreleased
 
+### Changed
+
+- **The mod now loads in a singleplayer world too.** `src/main/resources/fabric.mod.json` used to
+  mark the mod as `"server"`-only, a value Fabric Loader honours by refusing to load it in a
+  singleplayer world — the integrated server runs inside the client JVM, and a `server` mod is
+  not loaded there. It now declares `"environment": "*"`, so the integrated server loads it
+  exactly as a dedicated one does. The mod still has no client half: one `main` entrypoint, no
+  `client` entrypoint, and nothing under `assets/`. Verified by playing in a singleplayer world.
+
 ### Added
 
 - **An English-first documentation set.** `README.md` plus `docs/ARCHITECTURE.md`,
@@ -29,7 +38,7 @@ All notable changes to PairedPortals, newest first. The format follows
     resolved per player) and `src/main/java/com/example/pairedportals/text/Messages.java` (every
     player-visible string held in both languages side by side, one `Text` record per message — see
     `src/main/java/com/example/pairedportals/text/Text.java`).
-  - Because the mod is server-side only it ships no client language file and does not use
+  - Because the mod has no client half it ships no client language file and does not use
     `Component.translatable(...)`; the server selects the literal per player and sends it. The
     client locale is read from `ServerPlayer.clientInformation().language()`.
   - Both player-facing surfaces are localised: the **action-bar hints** and the **`/pairedportals`
@@ -53,16 +62,16 @@ All notable changes to PairedPortals, newest first. The format follows
 
 ## 1.0.0
 
-The first release: **server-side-only paired sign portals for Minecraft 26.3**. Put a written sign
+The first release: **server-side paired sign portals for Minecraft 26.3**. Put a written sign
 inside a portal-shaped obsidian frame, light it, and any two frames carrying the same sign text
 become a two-way pair — across dimensions, and across worlds on a multi-world server.
 
 ### Features
 
-- **Server-side only, zero client dependency.** `src/main/resources/fabric.mod.json` is
-  `"environment": "server"` with a `main` entrypoint and no `client` entrypoint; the packaged jar
+- **Server-side, zero client dependency.** `src/main/resources/fabric.mod.json` is
+  `"environment": "*"` with a `main` entrypoint and no `client` entrypoint; the packaged jar
   has zero hits for `client|assets|lang|models|textures`. A vanilla client connects as-is — no mod
-  install, no resource pack.
+  install, no resource pack; a singleplayer world runs the mod through its own integrated server.
 - **No real block is replaced.** The frame is vanilla obsidian and the door block is vanilla
   `nether_portal`; the two door states are distinguished only by the action-bar text the server
   sends, both when the crosshair rests on a frame and when it rests on a portal block in the hole.

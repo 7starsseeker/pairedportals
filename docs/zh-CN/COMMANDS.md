@@ -418,7 +418,7 @@ no portal owns <x, y, z> (neither a lit block of a hole nor a frame block around
 
 ## 游戏内文本与命令输出
 
-本 mod 发出去的每一段文字都由服务器写死：它纯服务端，没法附客户端语言文件，而用
+本 mod 发出去的每一段文字都由服务器写死：它没有客户端半边，没法附客户端语言文件，而用
 `Component.translatable(...)` 只会把客户端解析不了的键原样送过去——屏幕上出现的是
 `pairedportals.message.pending` 这种原始键名。所以由服务器自己挑文案、发字面量。它手上唯一的按玩家
 信号，是客户端加入时上报的语言码（`ServerPlayer.clientInformation().language()`）——这也正是对的信号，

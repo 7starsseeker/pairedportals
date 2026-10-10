@@ -3,9 +3,9 @@
   "id": "pairedportals",
   "version": "1.0.0",
   "name": "PairedPortals",
-  "description": "Sign-paired custom portals: same words on the sign, a private link between the two frames. Server-side only.",
+  "description": "Sign-paired custom portals: same words on the sign, a private link between the two frames. All functionality runs on the server; works in singleplayer and on servers.",
   "license": "Apache-2.0",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "main": ["com.example.pairedportals.PairedPortals::onInitialize"]
   },

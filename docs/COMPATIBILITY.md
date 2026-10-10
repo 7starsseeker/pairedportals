@@ -111,10 +111,10 @@ cycle is not a reliable harness, and that is stated here rather than dressed up 
 
 ## A vanilla-only client can connect (§10.2)
 
-The mod is server-side only, and this claim has both halves — a static one you can check by reading,
+The mod is server-side, and this claim has both halves — a static one you can check by reading,
 and a dynamic one that was actually run.
 
-**Static proof.** `src/main/resources/fabric.mod.json` says `"environment": "server"` and declares
+**Static proof.** `src/main/resources/fabric.mod.json` says `"environment": "*"` and declares
 only a `main` entrypoint, no `client` entrypoint. The built jar is 45 entries and carries no
 client-side resource of any kind: the mod's own class files plus exactly two resources,
 `fabric.mod.json` and `pairedportals.mixins.json`, and no `assets/`, `lang/`, `models/` or

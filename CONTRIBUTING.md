@@ -11,17 +11,17 @@ pull request has to contain. Read this before opening one.
 
 ## What the project is, and the one hard filter
 
-PairedPortals is a **server-side-only** Fabric mod for **Minecraft 26.3**: a written sign inside a
+PairedPortals is a **server-side** Fabric mod for **Minecraft 26.3**: a written sign inside a
 portal-shaped obsidian frame turns that frame into a door, and any two doors carrying the **same sign
 text** become a two-way pair — across dimensions, and across worlds on a multi-world server.
 
 Every change has to pass one filter before anything else:
 
-1. It must serve the mod's purpose — **paired sign portals, server-side only**.
+1. It must serve the mod's purpose — **paired sign portals, server-side**.
 2. It must **not** add client-side resources, new registries, or third-party dependencies.
 
 A change that adds a client asset, a block/entity/item registration, or a new jar dependency is out
-of scope by construction; `src/main/resources/fabric.mod.json` is `"environment": "server"` with a
+of scope by construction; `src/main/resources/fabric.mod.json` is `"environment": "*"` with a
 single `main` entrypoint, and that is the design, not an accident. The build is offline `javac`, so
 a third-party dependency would also make the mod unbuildable on machines that do not have that jar.
 
@@ -63,7 +63,7 @@ Chinese wording **side by side**, and the language is resolved **per player** th
 `src/main/java/com/example/pairedportals/text/Lang.java`. Never hard-code a fresh literal at the call
 site — if a player can read it, it belongs in `Messages`.
 
-- The mod is server-side only, so it cannot ship a client language file and does **not** use
+- The mod has no client half, so it cannot ship a client language file and does **not** use
   `Component.translatable(...)`; the server picks the literal per player and sends it. The client
   locale comes from `ServerPlayer.clientInformation().language()`.
 - `zh_cn` / `zh_tw` / `zh_hk` get Chinese; every other client language gets English.

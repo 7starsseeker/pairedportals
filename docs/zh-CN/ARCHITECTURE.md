@@ -23,7 +23,7 @@ canonical 版见 [docs/ARCHITECTURE.md](../ARCHITECTURE.md)，两版结构逐节
 
 | 性质 | 仓库里的证据 |
 |---|---|
-| **纯服务端**。原版客户端直接连，什么都不用装，也不需要资源包。 | [`fabric.mod.json`](../../src/main/resources/fabric.mod.json) 是 `"environment": "server"`，只有一个 `main` 入口、**没有** `client` 入口；编译产物 jar 共 45 个条目、**不含任何客户端资源**——就是本 mod 自己的 class 文件加 `fabric.mod.json` 与 `pairedportals.mixins.json`，没有 `assets/`、`lang/`、`models/`、`textures/` 条目（`unzip -Z1 build/libs/pairedportals-1.0.0.jar | grep -v '\.class$'`；一条不分大小写的 `client|assets|lang|models|textures` 只会命中 `com/example/pairedportals/text/Lang.class`，那是我们自己的类文件，不是资源） |
+| **服务端侧**。原版客户端直接连，什么都不用装，也不需要资源包；单人存档由游戏自带的集成服务端加载，跑的是同一套服务端逻辑。 | [`fabric.mod.json`](../../src/main/resources/fabric.mod.json) 是 `"environment": "*"`，只有一个 `main` 入口、**没有** `client` 入口；编译产物 jar 共 45 个条目、**不含任何客户端资源**——就是本 mod 自己的 class 文件加 `fabric.mod.json` 与 `pairedportals.mixins.json`，没有 `assets/`、`lang/`、`models/`、`textures/` 条目（`unzip -Z1 build/libs/pairedportals-1.0.0.jar | grep -v '\.class$'`；一条不分大小写的 `client|assets|lang|models|textures` 只会命中 `com/example/pairedportals/text/Lang.class`，那是我们自己的类文件，不是资源） |
 | **零游戏注册项**。没有新方块、物品、实体、方块实体、POI 类型、菜单、封包、标签或数据组件。 | 全仓源码只有两个游戏回调：`ServerTickEvents.END_SERVER_TICK` 与 `CommandRegistrationCallback.EVENT`，都在 [`PairedPortals.java:56-63`](../../src/main/java/com/example/pairedportals/PairedPortals.java) —— 外加自己的命令树，而命令树不是注册项 |
 | **无第三方依赖**。 | `fabric.mod.json` 的 `depends` 只有 `fabricloader`、`fabric-api`、`minecraft`、`java`；可选的 Worlds 桥（§11）走反射，只在 `suggests` 里提一句 |
 
@@ -32,8 +32,10 @@ canonical 版见 [docs/ARCHITECTURE.md](../ARCHITECTURE.md)，两版结构逐节
 WAILA 式叠加层永远都会说 "Obsidian"。**actionbar 是「零资源服务端 mod」真正拥有的唯一客户端可见面**，
 门的两句状态文案就放在那里（§7）。
 
-同一条边界也决定了**措辞本身**怎么来的，这一点值得先写在前面，因为它看起来像是漏了什么。既然
-`"environment": "server"`、没有客户端半边，这个 mod 就永远不能带语言文件；而 `Component.translatable(...)`
+同一条边界也决定了**措辞本身**怎么来的，这一点值得先写在前面，因为它看起来像是漏了什么。
+不管元数据怎么写（1.0.0 起是 `"environment": "*"`，所以单人存档也会
+加载本 mod），本 mod 都没有客户端半边 —— 只有一个 `main` 入口、`assets/` 下空无一物 ——
+因此它永远不能带语言文件；而 `Component.translatable(...)`
 会被当成一个没人能解析的 key 送到客户端，显示成原始的 `pairedportals.message.pending` 文本。**服务端必须
 自己按玩家选措辞、发字面量** —— 这正是 §2 里 `text/` 包做的事：语言取自服务端唯一的每玩家信号，也就是
 客户端加入时报的语言码（`ServerPlayer.clientInformation().language()`）。任何以 `zh` 开头的算中文，其余
@@ -85,7 +87,7 @@ WAILA 式叠加层永远都会说 "Obsidian"。**actionbar 是「零资源服务
 
 ### 2.1 `text/` 包：没有语言文件时的玩家可见措辞
 
-`text/` 这三个文件就是本 mod 对「纯服务端 mod 不能带翻译」的完整回答；它的形状值得单独写一段，因为它摆
+`text/` 这三个文件就是本 mod 对「没有客户端半边的 mod 不能带翻译」的完整回答；它的形状值得单独写一段，因为它摆
 在 §2 的表旁边看起来像是漏了什么。
 
 - **两列装在同一个对象里。** [`Text`](../../src/main/java/com/example/pairedportals/text/Text.java)
@@ -570,7 +572,7 @@ README.zh-CN.md §11.6；[TESTING.md](TESTING.md) 记录每个脚本覆盖什么
 8. **拆门清门洞，绝不清环。** 相邻门之间的共用柱毫发无伤。
 9. **「配对断了」不是一种状态，而是一个修复触发点。** 声称 `BOUND` 却没有完好对门的记录，会在加载时降级
    （`CustomPortal.load`），或在下次点火时被拆掉（`classify` 第 4 步），永远不会被静默信任。
-10. **不向游戏注册任何东西，客户端也不需要任何东西。** `fabric.mod.json` 保持 `"environment": "server"`、
+10. **不向游戏注册任何东西，客户端也不需要任何东西。** `fabric.mod.json` 保持 `"environment": "*"`、
     一个 `main` 入口、没有 `client` 入口，而 `PairedPortals.onInitialize` 里那两个事件回调是仅有的游戏钩子。
     没有客户端半边，也就没有语言文件：每一条玩家可见文案都由**服务端按收件人**、按对方客户端自报的语言
     选出（§2.1）—— 网络上没有任何翻译 key，真有也解析不了。

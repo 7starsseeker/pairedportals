@@ -72,7 +72,7 @@ Aim at a door (frame block or the lit block inside the hole) within about five b
 
 - **Every player-visible string follows the player's own client language.** A client language starting with `zh` (`zh_cn`, `zh_tw`, `zh_hk`) gets Chinese; every other language gets English. The server reads the language from the connecting client (`ServerPlayer.clientInformation().language()`).
 - Both surfaces follow it: the **action-bar hints** and the **`/pairedportals` command output**. Two players on the same server can therefore see the same door described in different languages at the same time.
-- **There is no resource pack and no language setting to install.** The mod is server-side only, so it cannot ship a client language file, and it does not use the vanilla translation system: the server picks the literal sentence for each player and sends it. Nothing appears in the client's options, and nothing needs to.
+- **There is no resource pack and no language setting to install.** The mod has no client half, so it cannot ship a client language file, and it does not use the vanilla translation system: the server picks the literal sentence for each player and sends it. Nothing appears in the client's options, and nothing needs to.
 - **Server log lines stay English.** So do console output and command blocks, which have no client language attached. The `list` / `info` tail markers (`[loaded]`, `[registered, not loaded]`, `[no such world]`) are always English for the same reason — the test scripts grep for them.
 
 ## Rules that surprise people
@@ -208,7 +208,7 @@ Either the door has no partner yet, or its twin's world is not available right n
 Because the other end was broken or removed. A pair dies together: when one end goes, both holes go dark and both records are removed, leaving two plain obsidian frames. If you did not break anything, check whether someone mined the twin's frame, or whether a door was deleted with `/pairedportals delete`.
 
 **Do my players need a mod or a resource pack?**
-No. It is a server-side-only mod: `"environment": "server"` in the metadata, no client entrypoint, and nothing in the client's assets. Vanilla clients connect and see everything the mod sends, including the action-bar text in their own language.
+No. All of the mod runs on the server: the metadata is `"environment": "*"`, there is no `client` entrypoint, and nothing sits in the client's assets. Vanilla clients connect and see everything the mod sends, including the action-bar text in their own language. In singleplayer the integrated server runs the mod for you, so your own worlds work as well.
 
 **Can two doors share a pillar?**
 Yes. Two frames three blocks apart share the obsidian post, the doors remain independent, and tearing one down does not touch the shared pillar or the other door.

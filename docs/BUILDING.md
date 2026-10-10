@@ -16,7 +16,7 @@ English README keeps the identical §N numbering and order.
 | Minecraft | **26.3** |
 | Mod loader | Fabric Loader |
 | Required dependency | Fabric API |
-| Side | **Server-side only.** The client installs nothing and needs no resource pack |
+| Side | **Server side.** The client installs nothing and needs no resource pack; a singleplayer world loads the mod through its own integrated server |
 | Java | **25** (JDK, supplying `javac`/`jar`; 26.3's class files are Java 25, and JDK 21 cannot even read them — `build.sh` self-checks and fails with a clear message) |
 | Optional compatibility | Worlds: Multiverse for Fabric (mod id `mc-worlds`) — a pure-reflection soft bridge; the mod works normally without it (README §11) |
 
@@ -158,10 +158,10 @@ Grab the released jar from Releases, or build it from source as described above.
 jars that has to be present is exactly: **Fabric Loader + Fabric API + this mod** (plus whatever else
 you already run).
 
-The mod is server-side only, so there is no client half to install and nothing to synchronise. The
+The mod has no client half, so there is nothing to install on the client and nothing to synchronise. The
 metadata makes this explicit:
 
-- `src/main/resources/fabric.mod.json` declares `"environment": "server"` and only a `main`
+- `src/main/resources/fabric.mod.json` declares `"environment": "*"` and only a `main`
   entrypoint — there is no `client` entrypoint.
 - `depends`: `fabricloader >=0.19.5`, `fabric-api *`, `minecraft ~26.3-`, `java >=25`.
 - `suggests`: `mc-worlds` (Worlds: Multiverse for Fabric). It is optional — see

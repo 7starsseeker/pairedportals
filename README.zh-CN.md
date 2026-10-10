@@ -9,18 +9,18 @@
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.3-62B47A?style=flat-square)](https://www.minecraft.net/)
 [![Loader](https://img.shields.io/badge/Loader-Fabric-DBB69B?style=flat-square)](https://fabricmc.net/)
-[![Side](https://img.shields.io/badge/Side-server--only-4C8EDA?style=flat-square)](#环境要求)
+[![Side](https://img.shields.io/badge/Side-server--side-4C8EDA?style=flat-square)](#环境要求)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](LICENSE)
 
 **同文字告示牌配对的自定义传送门。**
 
 在传送门形状的黑曜石框里放一块**写着文字的告示牌**，点火后这扇门就不再走原版的「主世界↔下界」规则，而是**同文字的门两两配对、互相直达** —— 跨维度，也包括多世界服务端的自定义维度。
 
-*PairedPortals is a server-side-only Fabric mod for Minecraft 26.3: put a written sign inside a portal-shaped obsidian frame, light it, and any two portals carrying the same text become a two-way pair — across dimensions, custom ones included.*
+*PairedPortals is a server-side Fabric mod for Minecraft 26.3 (it works in singleplayer too): put a written sign inside a portal-shaped obsidian frame, light it, and any two portals carrying the same text become a two-way pair — across dimensions, custom ones included.*
 
 ## 特性
 
-- **纯服务端，零客户端依赖**：`fabric.mod.json` 是 `"environment": "server"`，只有 `main` 入口、没有 `client` 入口；编译产物 jar 里 `client|assets|lang|models|textures` **0 命中**。原版客户端直连即可，不需要装本 mod，也不需要资源包。
+- **逻辑全在服务端，零客户端依赖**：`fabric.mod.json` 是 `"environment": "*"`，只有 `main` 入口、没有 `client` 入口；编译产物 jar 里 `client|assets|lang|models|textures` **0 命中**。原版客户端直连即可，不需要装本 mod，也不需要资源包；**单人存档同样生效** —— 集成服务端同样是服务端，本 mod 在单人世界里和在专用服务端上跑的是同一套逻辑。
 - **不替换任何真实方块**：门框就是**原版黑曜石**，门洞里的门方块就是**原版 `nether_portal`**。门的两种状态（未绑定 / 已绑定）只靠服务端下发的 actionbar 文案区分 —— 准星指向门框、或指向门洞里的传送门方块时都会提示。
 - **不抢原版门**：点火分流在 `BaseFireBlock.onPlace` HEAD 同 tick 完成；原版找落脚点时若命中我们的门，直接报「没找到」。**无牌 / 空牌 / 两块以上牌子 ⇒ 完整交还原版逻辑**，旁边有原版门也不受影响（§2、§10.1）。
 - **配对规则只有一条**：同文字取**最早**的那扇未绑定门（FIFO），两端一起转已绑定。一格门框可以被两扇门共用而互不牵连；**拆掉一端 ⇒ 整对一起消失**，所以不存在「还亮着却走不通」的门（§4）。
@@ -34,7 +34,7 @@
 | Minecraft | **26.3** |
 | 模组加载器 | Fabric Loader |
 | 必需依赖 | Fabric API |
-| 安装侧 | **仅服务端**。客户端不需要安装本 mod，也不需要资源包 |
+| 安装侧 | **服务端侧**。客户端不需要安装本 mod，也不需要资源包；单人存档由游戏自带的集成服务端加载，同样生效 |
 | Java | **25**（26.3 的 class 是 Java 25，低版本 javac 读不了；`build.sh` 会先自检并明确报错） |
 | 可选兼容 | Worlds: Multiverse for Fabric（mod id `mc-worlds`）—— 纯反射软桥，不装也照常工作（§11） |
 
@@ -117,7 +117,7 @@ src/main/java/com/example/pairedportals/
   command/
     CustomPortalCommand          /pairedportals help|list|info|delete|purge|tp|unbind|pair|permission|debug
 src/main/resources/
-  fabric.mod.json             模组元数据（`"environment": "server"`，只有 `main` 入口，见 §3）
+  fabric.mod.json             模组元数据（`"environment": "*"`，只有 `main` 入口，见 §3）
   pairedportals.mixins.json   三个注入点 + 一个 `@Accessor` 的声明（见 §2）
 test/                        15 个 bash 脚本（12 个 `smoke-*` 断言 + 2 个 `probe-*` 诊断 + 常驻宿主 `client-host.sh`）+ 1 个无 mod 客户端启动器，见 §6
 ```
@@ -361,7 +361,7 @@ $MC_SERVER_DIR/
 
 ### 10.2 纯原版客户端直连（上游设计文档 §10.5 R5）
 
-**静态证据（可查）**：`src/main/resources/fabric.mod.json` 是 `"environment": "server"`，只有 `main` 入口、没有 `client` 入口；编译产物 jar 里 `client|assets|lang|models|textures` **0 命中**（39 个文件 / 98745 字节）；源码里**零游戏注册项**（只有 `ServerTickEvents.END_SERVER_TICK` 与 `CommandRegistrationCallback` 两个事件回调，加一条自己的命令树）⇒ 服务端不需要客户端装任何东西，与文档「0 个新建注册项、零客户端资源」一致。
+**静态证据（可查）**：`src/main/resources/fabric.mod.json` 是 `"environment": "*"`，只有 `main` 入口、没有 `client` 入口；编译产物 jar 里 `client|assets|lang|models|textures` **0 命中**（39 个文件 / 98745 字节）；源码里**零游戏注册项**（只有 `ServerTickEvents.END_SERVER_TICK` 与 `CommandRegistrationCallback` 两个事件回调，加一条自己的命令树）⇒ 服务端不需要客户端装任何东西，与文档「0 个新建注册项、零客户端资源」一致。
 
 **动态半边也已验**：`test/client-join.py` 起一个**无 mod** 的 26.3 客户端直连成功（`logged in with entity id 3`），并且能看到服务端下发的 actionbar 文案、紫屏与落点（见 §8.2 的 `01`/`03`/`04`/`18`/`19`/`20` 截图）。剩下没验的只有**音效**（截图看不出来，且需要耳朵）。
 
