@@ -11,6 +11,7 @@
 [![Loader](https://img.shields.io/badge/Loader-Fabric-DBB69B?style=flat-square)](https://fabricmc.net/)
 [![Side](https://img.shields.io/badge/Side-server--side-4C8EDA?style=flat-square)](#环境要求)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](LICENSE)
+[![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)
 
 **同文字告示牌配对的自定义传送门。**
 
